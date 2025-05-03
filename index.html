@@ -151,17 +151,16 @@
       const x = inputRect.left + inputRect.width / 2 - mouse.offsetWidth / 2;  // Calculate the position to center on the input field
       const y = inputRect.top + inputRect.height / 2 - mouse.offsetHeight / 2;
 
-      mouse.style.left = `${x}px`;
-      mouse.style.top = `${y}px`;
+      mouse.style.left = `0px`;
+      mouse.style.top = `0px`;
       mouse.style.display = 'block';
 
       // Move the mouse to the input field before typing
-      await new Promise(res => moveMouse(x, y, 400, res));
 
       guideText.style.display = 'block';
       guideText.innerHTML = "<p>Alright, because it is so hard to google stuff, I'll help! :)</p>";
       await pause(1500);
-
+      await new Promise(res => moveMouse(x, y, 400, res));
       await typeText(query);
 
       guideText.innerHTML = "<p>So after we type this insanely hard query, we have to click the button! wow..</p>";
