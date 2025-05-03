@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Let Me Google That For You</title>
+  <title>Let Me Google That For You exept actually Google</title>
   <style>
     body {
       background: #fff;
@@ -65,14 +65,15 @@
     }
 
     #mouse {
-      width: 24px;
-      height: 36px;
+      width: 48px; /* Increased cursor size */
+      height: 72px; /* Increased cursor size */
       background: url('cursor.png') no-repeat center;
       background-size: contain;
       position: fixed;
       pointer-events: none;
       z-index: 9999;
       display: none;
+      transition: left 0.3s ease-in-out, top 0.3s ease-in-out; /* Added transition for smooth movement */
     }
 
     #guide-text {
@@ -87,7 +88,6 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       font-family: 'Arial', sans-serif;
     }
-
   </style>
 </head>
 <body>
