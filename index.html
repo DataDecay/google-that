@@ -148,17 +148,19 @@
       if (!query) return;
 
       const inputRect = input.getBoundingClientRect();
-      const x = 0;
-      const y = 0;
+      const x = inputRect.left + inputRect.width / 2 - mouse.offsetWidth / 2;  // Calculate the position to center on the input field
+      const y = inputRect.top + inputRect.height / 2 - mouse.offsetHeight / 2;
 
       mouse.style.left = `${x}px`;
       mouse.style.top = `${y}px`;
       mouse.style.display = 'block';
 
+      // Move the mouse to the input field before typing
       await new Promise(res => moveMouse(x, y, 400, res));
+
       guideText.style.display = 'block';
       guideText.innerHTML = "<p>Alright, because it is so hard to google stuff, I'll help! :)</p>";
-      await pause(1500); // Increased pause
+      await pause(1500);
 
       await typeText(query);
 
@@ -169,15 +171,15 @@
       const bx = rect.left + rect.width / 2 - mouse.offsetWidth / 2;
       const by = rect.top + rect.height / 2 - mouse.offsetHeight / 2;
 
-      await new Promise(res => moveMouse(bx, by, 500, res)); // Increased hover time
+      await new Promise(res => moveMouse(bx, by, 500, res));
 
       searchButton.classList.add('hovered');
-      await pause(600);  // Increased hover pause
+      await pause(600);
 
       searchButton.classList.remove('hovered');
 
       guideText.innerHTML = "<p>That was NOT hard at all. :/</p>";
-      await pause(400);  // Increased final pause
+      await pause(400);
 
       window.location.href = 'https://www.google.com/search?q=' + encodeURIComponent(query);
     }
