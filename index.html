@@ -59,6 +59,11 @@
       opacity: 0.9;
     }
 
+    .fake-buttons button.hovered {
+      background-color: #f1f1f1;
+      border-color: #bdbdbd;
+    }
+
     #mouse {
       width: 24px;
       height: 36px;
@@ -69,6 +74,16 @@
       z-index: 9999;
       display: none;
     }
+
+    #guide-text {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #888;
+      text-align: center;
+      max-width: 500px;
+      display: none;
+    }
+
   </style>
 </head>
 <body>
@@ -85,10 +100,15 @@
     <div id="mouse"></div>
   </div>
 
+  <div id="guide-text">
+    <p>Wow, you really don’t know how to Google? Fine, I’ll do it for you. Start typing your question below, and watch the magic happen.</p>
+  </div>
+
   <script>
     const mouse = document.getElementById('mouse');
     const input = document.getElementById('input');
     const buttons = document.querySelectorAll('.fake-buttons button');
+    const guideText = document.getElementById('guide-text');
 
     function getQueryParam(name) {
       const urlParams = new URLSearchParams(window.location.search);
@@ -123,6 +143,8 @@
     async function startAnimation(query) {
       if (!query) return;
 
+      guideText.style.display = 'block'; // Show the guide text
+
       const inputRect = input.getBoundingClientRect();
       const x = inputRect.left + inputRect.width / 2 - mouse.offsetWidth / 2;
       const y = inputRect.top + inputRect.height / 2 - mouse.offsetHeight / 2;
@@ -132,17 +154,35 @@
       mouse.style.display = 'block';
 
       await new Promise(res => moveMouse(x, y, 500, res));
+
+      // Guide text update after moving the mouse to the input field
+      guideText.innerHTML = "<p>Alright, because it is so hard to google stuff, I'll help! :)</p>";
+      await pause(1000);
+
       await typeText(query);
 
-      for (const btn of buttons) {
-        const rect = btn.getBoundingClientRect();
-        const bx = rect.left + rect.width / 2 - mouse.offsetWidth / 2;
-        const by = rect.top + rect.height / 2 - mouse.offsetHeight / 2;
-        await new Promise(res => moveMouse(bx, by, 400, res));
-        await pause(400);
-      }
+      // Guide text update after typing
+      guideText.innerHTML = "<p>So after we type this insanely hard query, we have to click the button! wow..</p>";
 
+      // Hover over the Google Search button
+      const searchButton = buttons[0];
+      const rect = searchButton.getBoundingClientRect();
+      const bx = rect.left + rect.width / 2 - mouse.offsetWidth / 2;
+      const by = rect.top + rect.height / 2 - mouse.offsetHeight / 2;
+
+      await new Promise(res => moveMouse(bx, by, 400, res));
+
+      // Add the 'hover' effect to the Google Search button
+      searchButton.classList.add('hovered');
+      await pause(400);  // Pause on the button for realism
+
+      // Reset the hover effect
+      searchButton.classList.remove('hovered');
+
+      // Final guide text before redirecting
+      guideText.innerHTML = "<p>That was NOT hard at all. :/</p>";
       await pause(300);
+
       window.location.href = 'https://www.google.com/search?q=' + encodeURIComponent(query);
     }
 
