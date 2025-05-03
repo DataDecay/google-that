@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Let Me Google That For You</title>
+  <style>
+    body {
+      background: #fff;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    #logo {
+      font-size: 80px;
+      color: #4285F4;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+    #logo span:nth-child(2) { color: #EA4335; }
+    #logo span:nth-child(3) { color: #FBBC05; }
+    #logo span:nth-child(4) { color: #4285F4; }
+    #logo span:nth-child(5) { color: #34A853; }
+    #logo span:nth-child(6) { color: #EA4335; }
+
+    #search-box {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #input {
+      width: 500px;
+      padding: 10px 20px;
+      font-size: 20px;
+      border: 1px solid #ccc;
+      border-radius: 24px;
+      outline: none;
+    }
+
+    .fake-buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .fake-buttons button {
+      padding: 8px 16px;
+      font-size: 14px;
+      background-color: #f8f9fa;
+      border: 1px solid #dcdcdc;
+      border-radius: 4px;
+      cursor: default;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    #mouse {
+      width: 24px;
+      height: 36px;
+      background: url('https://th.bing.com/th/id/R.a8fbc85b9005c50f3fb14ad02073784b?rik=MqQ8MX7akEZIgw&riu=http%3a%2f%2fpngimg.com%2fuploads%2fcursor%2fcursor_PNG11.png&ehk=M0a5M36JN%2f7GVlZUISsZwsPAc9Lbr%2bwfyUnQr8eDT8c%3d&risl=&pid=ImgRaw&r=0') no-repeat center;
+      background-size: contain;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="logo">
+    <span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span>
+  </div>
+
+  <div id="search-box">
+    <input id="input" type="text" placeholder="Search Google or type a URL">
+    <div class="fake-buttons">
+      <button>Google Search</button>
+      <button>I'm Feeling Lucky</button>
+    </div>
+    <div id="mouse"></div>
+  </div>
+
+  <script>
+    const mouse = document.getElementById('mouse');
+    const input = document.getElementById('input');
+    const buttons = document.querySelectorAll('.fake-buttons button');
+
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    function moveMouse(x, y, duration, cb) {
+      const startX = mouse.getBoundingClientRect().left;
+      const startY = mouse.getBoundingClientRect().top;
+      const dx = x - startX;
+      const dy = y - startY;
+      const steps = Math.floor(duration / 16);
+      let frame = 0;
+
+      function step() {
+        const progress = frame / steps;
+        const nextX = startX + dx * progress;
+        const nextY = startY + dy * progress;
+        mouse.style.left = `${nextX}px`;
+        mouse.style.top = `${nextY}px`;
+        frame++;
+        if (frame <= steps) requestAnimationFrame(step);
+        else cb();
+      }
+      step();
+    }
+
+    function pause(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function startAnimation(query) {
+      if (!query) return;
+
+      const inputRect = input.getBoundingClientRect();
+      const x = inputRect.left + inputRect.width / 2 - mouse.offsetWidth / 2;
+      const y = inputRect.top + inputRect.height / 2 - mouse.offsetHeight / 2;
+
+      mouse.style.left = `${x}px`;
+      mouse.style.top = `${y}px`;
+      mouse.style.display = 'block';
+
+      await new Promise(res => moveMouse(x, y, 500, res));
+      await typeText(query);
+
+      for (const btn of buttons) {
+        const rect = btn.getBoundingClientRect();
+        const bx = rect.left + rect.width / 2 - mouse.offsetWidth / 2;
+        const by = rect.top + rect.height / 2 - mouse.offsetHeight / 2;
+        await new Promise(res => moveMouse(bx, by, 400, res));
+        await pause(400);
+      }
+
+      await pause(300);
+      window.location.href = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+    }
+
+    function typeText(text) {
+      return new Promise(resolve => {
+        input.value = '';
+        let i = 0;
+        const interval = setInterval(() => {
+          input.value += text[i];
+          i++;
+          if (i === text.length) {
+            clearInterval(interval);
+            setTimeout(resolve, 500);
+          }
+        }, 150);
+      });
+    }
+
+    window.onload = () => {
+      const query = getQueryParam('q');
+      if (query) {
+        setTimeout(() => {
+          startAnimation(query);
+        }, 800);
+      } else {
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            startAnimation(input.value.trim());
+          }
+        });
+      }
+    };
+  </script>
+</body>
+</html>
