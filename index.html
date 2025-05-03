@@ -120,7 +120,7 @@
       const startY = mouse.getBoundingClientRect().top;
       const dx = x - startX;
       const dy = y - startY;
-      const steps = Math.floor(duration / 16);
+      const steps = Math.floor(duration / 12);
       let frame = 0;
 
       function step() {
@@ -143,7 +143,7 @@
     async function startAnimation(query) {
       if (!query) return;
 
-      guideText.style.display = 'block'; // Show the guide text
+      guideText.style.display = 'block';
 
       const inputRect = input.getBoundingClientRect();
       const x = inputRect.left + inputRect.width / 2 - mouse.offsetWidth / 2;
@@ -153,35 +153,29 @@
       mouse.style.top = `${y}px`;
       mouse.style.display = 'block';
 
-      await new Promise(res => moveMouse(x, y, 500, res));
+      await new Promise(res => moveMouse(x, y, 400, res));
 
-      // Guide text update after moving the mouse to the input field
       guideText.innerHTML = "<p>Alright, because it is so hard to google stuff, I'll help! :)</p>";
-      await pause(1000);
+      await pause(1500); // Increased pause
 
       await typeText(query);
 
-      // Guide text update after typing
       guideText.innerHTML = "<p>So after we type this insanely hard query, we have to click the button! wow..</p>";
 
-      // Hover over the Google Search button
       const searchButton = buttons[0];
       const rect = searchButton.getBoundingClientRect();
       const bx = rect.left + rect.width / 2 - mouse.offsetWidth / 2;
       const by = rect.top + rect.height / 2 - mouse.offsetHeight / 2;
 
-      await new Promise(res => moveMouse(bx, by, 400, res));
+      await new Promise(res => moveMouse(bx, by, 500, res)); // Increased hover time
 
-      // Add the 'hover' effect to the Google Search button
       searchButton.classList.add('hovered');
-      await pause(400);  // Pause on the button for realism
+      await pause(600);  // Increased hover pause
 
-      // Reset the hover effect
       searchButton.classList.remove('hovered');
 
-      // Final guide text before redirecting
       guideText.innerHTML = "<p>That was NOT hard at all. :/</p>";
-      await pause(300);
+      await pause(400);  // Increased final pause
 
       window.location.href = 'https://www.google.com/search?q=' + encodeURIComponent(query);
     }
@@ -195,9 +189,9 @@
           i++;
           if (i === text.length) {
             clearInterval(interval);
-            setTimeout(resolve, 500);
+            setTimeout(resolve, 800); // Increased delay after typing
           }
-        }, 150);
+        }, 150); // Keep the typing speed normal
       });
     }
 
@@ -206,7 +200,7 @@
       if (query) {
         setTimeout(() => {
           startAnimation(query);
-        }, 800);
+        }, 800); // Increased start delay
       } else {
         input.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') {
