@@ -65,8 +65,8 @@
     }
 
     #mouse {
-      width: 48px; /* Increased cursor size */
-      height: 72px; /* Increased cursor size */
+      width: 48px;
+      height: 72px;
       background: url('cursor.png') no-repeat center;
       background-size: contain;
       position: fixed;
@@ -103,9 +103,7 @@
     <div id="mouse"></div>
   </div>
 
-  <div id="guide-text">
-    
-  </div>
+  <div id="guide-text"></div>
 
   <script>
     const mouse = document.getElementById('mouse');
@@ -123,13 +121,13 @@
       const startY = mouse.getBoundingClientRect().top;
       const dx = x - startX;
       const dy = y - startY;
-      const steps = Math.floor(duration / 12);
+      const steps = Math.floor(duration / 10); // Faster steps for a smoother transition
       let frame = 0;
 
       function step() {
         const progress = frame / steps;
-        const nextX = startX + dx * progress + (Math.random() - 0.5) * 2; // Adding cushioning
-        const nextY = startY + dy * progress + (Math.random() - 0.5) * 2; // Adding cushioning
+        const nextX = startX + dx * progress + (Math.random() - 0.5) * 4; // Adjusted random offset for smoother movement
+        const nextY = startY + dy * progress + (Math.random() - 0.5) * 4; // Adjusted random offset
         mouse.style.left = `${nextX}px`;
         mouse.style.top = `${nextY}px`;
         frame++;
@@ -147,19 +145,17 @@
       if (!query) return;
 
       const inputRect = input.getBoundingClientRect();
-      const x = inputRect.left + inputRect.width / 2 - mouse.offsetWidth / 2;  // Calculate the position to center on the input field
+      const x = inputRect.left + inputRect.width / 2 - mouse.offsetWidth / 2; // Centered on the input field
       const y = inputRect.top + inputRect.height / 2 - mouse.offsetHeight / 2;
 
       mouse.style.left = `0px`;
       mouse.style.top = `0px`;
       mouse.style.display = 'block';
 
-      // Move the mouse to the input field before typing
-
       guideText.style.display = 'block';
       guideText.innerHTML = "<p>Alright, because it is so hard to google stuff, I'll help! :)</p>";
       await pause(1500);
-      await new Promise(res => moveMouse(x, y, 400, res));
+      await new Promise(res => moveMouse(x, y, 400, res)); // Moving the mouse to the center
       await typeText(query);
 
       guideText.innerHTML = "<p>So after we type this insanely hard query, we have to click the button! wow..</p>";
@@ -191,14 +187,13 @@
           i++;
           if (i === text.length) {
             clearInterval(interval);
-            setTimeout(resolve, 800); // Increased delay after typing
+            setTimeout(resolve, 800);
           }
-        }, 150); // Keep the typing speed normal
+        }, 150); 
       });
     }
 
     window.onload = () => {
-      // Set initial mouse position to top-left
       mouse.style.left = '0px';
       mouse.style.top = '0px';
 
@@ -206,7 +201,7 @@
       if (query) {
         setTimeout(() => {
           startAnimation(query);
-        }, 800); // Increased start delay
+        }, 800);
       } else {
         input.addEventListener('keydown', (e) => {
           if (e.key === 'Enter') {
