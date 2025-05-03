@@ -147,7 +147,6 @@
     async function startAnimation(query) {
       if (!query) return;
 
-
       const inputRect = input.getBoundingClientRect();
       const x = inputRect.left + inputRect.width / 2 - mouse.offsetWidth / 2;
       const y = inputRect.top + inputRect.height / 2 - mouse.offsetHeight / 2;
@@ -199,6 +198,10 @@
     }
 
     window.onload = () => {
+      // Set initial mouse position to top-left
+      mouse.style.left = '0px';
+      mouse.style.top = '0px';
+
       const query = getQueryParam('q');
       if (query) {
         setTimeout(() => {
