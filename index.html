@@ -147,7 +147,6 @@
     async function startAnimation(query) {
       if (!query) return;
 
-      guideText.style.display = 'block';
 
       const inputRect = input.getBoundingClientRect();
       const x = inputRect.left + inputRect.width / 2 - mouse.offsetWidth / 2;
@@ -158,7 +157,7 @@
       mouse.style.display = 'block';
 
       await new Promise(res => moveMouse(x, y, 400, res));
-
+      guideText.style.display = 'block';
       guideText.innerHTML = "<p>Alright, because it is so hard to google stuff, I'll help! :)</p>";
       await pause(1500); // Increased pause
 
